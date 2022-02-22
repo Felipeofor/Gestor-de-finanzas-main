@@ -1,0 +1,25 @@
+.contacto{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+img{
+    width: 300px;
+    height: auto;
+    padding: 5px;
+}
+
+img:hover{
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px){
+    img{
+        width: 200px;
+    }
+}
+

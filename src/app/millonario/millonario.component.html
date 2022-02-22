@@ -1,0 +1,28 @@
+<section class="container mt-5 p-5 d-flex justify-content-center flex-column">
+    <h2 class="mb-3 d-flex justify-content-center ">Quiero ser millonario</h2>
+
+    <div class="container">
+        <div class="mb-3">
+            <span *ngIf="alerta" class="f-3 text-danger text-uppercase" >Ingresa al menos un año</span>
+            <label *ngIf="!alerta" for="tiempo" name="tiempo" class="form-label">En cuantos años querés ser millonario?</label>
+            <input type="number" [(ngModel)]="inputTiempo" class="form-control" id="tiempo">
+        </div>
+        <div class="mb-3">
+            <span class="f-3 text-danger text-uppercase" *ngIf="alertaMillones" >Ingresa al menos un millón</span>
+            <label *ngIf="!alertaMillones" for="millones" name="millones" class="form-label">Cuál es tu objetivo en millones?</label>
+            <input type="number" min="1000000" [(ngModel)]="inputMillones" class="form-control" id="millones">
+        </div>
+        <button type="submit" (click)="calcularMillonario()" class="btn btn-primary mt-3">Calcular</button>
+    </div>
+
+    <div *ngIf="mostrarResultado" class="container pt-5 d-flex justify-content-center flex-column">
+        <h2 class="text-center mt-5">Tienes que ganar ${{resultado}} por día para conseguir tu objetivo!!</h2>
+        
+        <span>
+            <p class="span text-center mt-5">CONSTRUIR RIQUEZA ES UNA MARATÓN, NO UNA CARRERA.</p>
+        </span>
+        
+        <p class="texto text-center mt-5">¿Qué tal si comenzamos por ordenar nuestras finanzas?</p>
+    </div>
+    
+</section>

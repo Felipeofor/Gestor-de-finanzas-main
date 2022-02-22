@@ -1,0 +1,79 @@
+<div class="container mt-5 justify-content-center">
+  <h2 class="mb-3 d-flex justify-content-center ">Calculadora de ahorro</h2>
+  <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
+    <div class="col-8 d-flex justify-content-start col-md-justify-content-center">
+      <div class="d-flex flex-column col-12 col-md-6 justify-content-center p-3">
+        <div class="form-group">
+          <label for="monto">Monto</label>
+          <input type="number" class="form-control" id="monto" name="monto" placeholder="Ingrese un monto" [(ngModel)]="inputMonto" >
+        </div>
+        <div class="form-group">
+          <label for="mes">Mes</label>
+          <input type="text" name="mes" class="form-control" id="mes" placeholder="Enero" [(ngModel)]="inputMes" >
+        </div>
+        <div class="form-group">
+          <label for="referencia">Referencia</label>
+          <input type="text" name="referencia" class="form-control" id="referencia" placeholder="Sueldo" [(ngModel)]="inputReferencia" >
+        </div>
+        <button *ngIf="!modoEdicion" type="submit" class="btn btn-primary mt-3" (click)="agregarAhorro()">Calcular</button>
+      </div>
+    </div>
+    
+    <div class="card col-10 col-md-4 m-3">
+      <div class="card-body">
+        <h3 class="card-title">Referencias:</h3>
+        <p>Para toda la vida: 10% del monto</p>
+        <div class="referencias">
+        <p>Gastos basicos: 60% de los 90% restantes</p>
+        <p>Gustos de corto plazo: 10% de los 90% restantes </p>
+        <p>Gastos de largo plazo: 10% de los 90% restantes</p>
+        <p>Emergencias: 20% de los 90% restantes</p>
+      </div>
+      </div>
+   
+      <div class="card-body">
+        <h3 class="card-title">Balance:</h3>
+        <p>Para toda la vida: ${{paraTodaLaVidaBalance}}</p>
+        <p>Gastos basicos: ${{gastosBasicosBalance}}</p>
+        <p>Gustos de corto plazo: ${{gustosCortoPlazoBalance}} </p>
+        <p>Gastos de largo plazo: ${{gustosLargoPlazoBalance}}</p>
+        <p>Emergencias: ${{emergenciasBalance}}</p>
+        <p>Total: ${{totalBalance}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="mostrarTabla" class="container overflow-auto mt-5 mb-5">
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Mes</th>
+        <th>Monto</th>
+        <th>Para toda la vida</th>
+        <th>Gastos basicos</th>
+        <th>Gustos de corto plazo</th>
+        <th>Gustos de largo plazo</th>
+        <th>Emergencias</th>
+        <th>Referencia</th>
+        <th>Editar/Eliminar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="gastos" *ngFor="let item of ahorros; let i= index" >
+        <td class="text-capitalize">{{item.mes}}</td>
+        <td>{{item.ingreso}}</td>
+        <td>{{item.paraTodaLaVida}}</td>
+        <td>{{item.gastosBasicos}}</td>
+        <td>{{item.gustosCortoPlazo}}</td>
+        <td>{{item.gustosLargoPlazo}}</td>
+        <td>{{item.emergencias}}</td>
+        <td class="text-capitalize">{{item.referencia}}</td>
+        <td class="justify-content-center">
+          <button *ngIf="item.editar" class="btn btn-primary m-1"(click)="editarAhorro(i)">Guardar edición</button>
+          <button *ngIf="!item.editar" class="btn btn-primary m-1" (click)="editarAhorro(i)">Editar</button>
+          <button class="btn btn-danger m-1" (click)="eliminarAhorro(i)">Eliminar</button>
+      </tr>
+    </tbody>
+  </table>
+</div>

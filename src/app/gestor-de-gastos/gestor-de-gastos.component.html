@@ -1,0 +1,52 @@
+<section class="container mt-5 p-5">
+  <h2 class="mb-3 d-flex justify-content-center ">Gestor de gastos</h2>
+  <div>
+    <div class="mb-3">
+      <label for="nombre" name="nombre" class="form-label">Nombre del gasto</label>
+      <input type="text" [(ngModel)]="inputNombre" class="form-control" id="nombre">
+    </div>
+    <div class="mb-3">
+      <label for="detalle" name="detalle" class="form-label">Detalle</label>
+      <input type="text" [(ngModel)]="inputDetalle" class="form-control" id="detalle">
+    </div>
+    <div class="mb-3">
+      <label for="tipo" class="form-label">Tipo de gasto</label>
+      <input type="text" [(ngModel)]="inputTipo" class="form-control" id="precio">
+    </div>
+    <div class="mb-3">
+      <label for="precio" class="form-label">Precio</label>
+      <input type="number" [(ngModel)]="inputPrecio" class="form-control" id="precio">
+    </div>
+    <button *ngIf="!modoEdicion" type="submit" (click)="agregarGasto()" class="btn btn-primary mt-3">Guardar
+      gasto</button>
+    <button *ngIf="modoEdicion" type="submit" (click)="agregarGasto()" class="btn btn-primary mt-3">Guardar
+      edición</button>
+  </div>
+
+  <div *ngIf="mostrarTabla" class="mt-5 mb-5 overflow-auto">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Fecha y hora</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Detalle</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Monto</th>
+          <th scope="col">Editar/Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of gastos;let i = index">
+          <td>{{item.fechaYHora}}</td>
+          <td>{{item.nombre}}</td>
+          <td>{{item.detalle}}</td>
+          <td>{{item.tipo}}</td>
+          <td>{{item.precio}}</td>
+          <td>
+            <button class="btn btn-danger m-1" (click)="eliminarGasto(i)">Eliminar</button>
+            <button *ngIf="!item.editar" class="btn btn-warning m-1" (click)="editarGasto(i)">Editar</button>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

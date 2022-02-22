@@ -1,0 +1,45 @@
+*{
+    padding: 0;
+    margin: 0;
+    color: rgb(121, 70, 70);
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    line-height: 1.5;
+    font-weight: 300;
+    color: rgb(121, 70, 70);
+    background-color: rgb(226, 226, 226);
+}
+
+a, a:visited{
+    text-decoration: none;
+    color: rgb(121, 70, 70);
+}
+
+a:hover{
+    opacity: 0.7;
+}
+
+input[type=number], input[type=text], input[type=email], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=tel], input[type=url], input[type=search], textarea{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(121, 70, 70);
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

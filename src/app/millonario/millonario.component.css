@@ -1,0 +1,11 @@
+.span{
+    font-size: 30px;
+    font-weight: bold;
+    word-spacing: 10px;
+    letter-spacing: 1px;
+    color: rgb(255, 255, 255);
+}
+
+.texto{
+    font-size: 18px;
+}

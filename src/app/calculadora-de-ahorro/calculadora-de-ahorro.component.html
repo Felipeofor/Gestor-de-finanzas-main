@@ -61,18 +61,18 @@
     </thead>
     <tbody>
       <tr class="gastos" *ngFor="let item of ahorros; let i= index" >
-        <td class="text-capitalize">{{item.mes}}</td>
-        <td>{{item.ingreso}}</td>
-        <td>{{item.paraTodaLaVida}}</td>
-        <td>{{item.gastosBasicos}}</td>
-        <td>{{item.gustosCortoPlazo}}</td>
-        <td>{{item.gustosLargoPlazo}}</td>
-        <td>{{item.emergencias}}</td>
-        <td class="text-capitalize">{{item.referencia}}</td>
+        <td class="text-capitalize">{{item.mes.toUpperCase()}}</td>
+        <td>${{currency(item.ingreso)}}</td>
+        <td>${{currency(item.paraTodaLaVida)}}</td>
+        <td>${{currency(item.gastosBasicos)}}</td>
+        <td>${{currency(item.gustosCortoPlazo)}}</td>
+        <td>${{currency(item.gustosLargoPlazo)}}</td>
+        <td>${{currency(item.emergencias)}}</td>
+        <td class="text-capitalize">{{item.referencia.toUpperCase()}}</td>
         <td class="justify-content-center">
           <button *ngIf="item.editar" class="btn btn-primary m-1"(click)="editarAhorro(i)">Guardar edición</button>
           <button *ngIf="!item.editar" class="btn btn-primary m-1" (click)="editarAhorro(i)">Editar</button>
-          <button class="btn btn-danger m-1" (click)="eliminarAhorro(i)">Eliminar</button>
+          <button class="btn btn-danger m-1" (click)="eliminarAhorro(item.id)">Eliminar</button>
       </tr>
     </tbody>
   </table>

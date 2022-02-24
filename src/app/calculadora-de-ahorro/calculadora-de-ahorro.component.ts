@@ -15,13 +15,18 @@ export class CalculadoraDeAhorroComponent implements OnInit {
 
   async ngOnInit(){
     this.getAhorros();
+
+    setTimeout(() => {
+      this.balance();
+    }
+    , 10);
   }
 
-  getAhorros(){
+  async getAhorros(){
     this.ahorroService.getAhorro().subscribe(
       response => {
+        console.log(response);
         this.ahorros = response;
-        console.log(this.ahorros);
       },
       error => {
         console.log(error);
@@ -41,7 +46,12 @@ export class CalculadoraDeAhorroComponent implements OnInit {
   modoEdicion: boolean = false;
   mostrarTabla: boolean = true;
 
-  async balance(){
+  //moneda local
+  currency = function(number: number | bigint){
+    return new Intl.NumberFormat().format(number);
+  };
+
+  balance = (): void =>{
     if (this.ahorros.length > 0) {
       this.totalBalance = this.ahorros.reduce((a, b) => a + b.ingreso, 0);
       this.paraTodaLaVidaBalance = this.ahorros.reduce((a, b) => a + b.paraTodaLaVida, 0);
@@ -60,32 +70,29 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     }
   }
 
-  async agregarAhorro(){
+  async agregarAhorro(): Promise<void>{
       this.ahorros.push(new Ahorro(this.inputMonto, this.inputMes, this.inputReferencia));
       this.inputMonto = 0;
       this.inputMes = "";
       this.inputReferencia = "";
-    
-      this.ahorroService.postAhorro(JSON.stringify(this.ahorros[this.ahorros.length - 1])).subscribe(
+      this.ahorroService.postAhorro(this.ahorros[this.ahorros.length - 1]).subscribe(
         response => {
           console.log(response);
-        },
-        error => {
-          console.log(error);
         }
       )
-      console.log(this.ahorros);
       this.balance()
+      console.log(this.ahorros, "agregar ahorro")
     if(this.ahorros.length > 0){
       this.mostrarTabla = true;
     }
   }
 
 
-  eliminarAhorro(index: number){
-    // console.log(this.ahorros);
-    // this.ahorros.splice(index, 1);
-    this.ahorroService.deleteAhorro(this.ahorros[index].id).subscribe(
+  eliminarAhorro(id: number): void{
+    // const id = this.ahorros[index].id;
+    this.ahorros.splice(id, 1);
+    console.log(id, "id")
+    this.ahorroService.deleteAhorro(id).subscribe(
       response => {
         console.log(response);
       },
@@ -93,10 +100,13 @@ export class CalculadoraDeAhorroComponent implements OnInit {
         console.log(error);
       }
     )
+    console.log(this.ahorros, "eliminar ahorro")
     this.balance();
     if(this.ahorros.length === 0){
       this.mostrarTabla = false;
     }
+
+    this.ngOnInit();
   }
 
   editarAhorro(index: number){
@@ -104,6 +114,11 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     this.ahorros[index].ingreso = this.inputMonto;
     this.ahorros[index].mes = this.inputMes.toUpperCase();
     this.ahorros[index].referencia = this.inputReferencia.toUpperCase();
+    this.ahorroService.putAhorro(this.ahorros[index]).subscribe(
+      response => {
+        console.log(response);
+      }
+    )
     this.inputMonto = 0;
     this.inputMes = "";
     this.inputReferencia = "";

@@ -20,13 +20,15 @@ export class AhorroService {
     }
 
     postAhorro(ahorro: any): Observable<any>{
-      return this.http.post(this._url, ahorro).pipe(
-        catchError(this.handleError)
-      )
+      return this.http.post(this._url, ahorro, {responseType: 'text'})
     }
     
     deleteAhorro(id: number): Observable<any>{
-        return this.http.delete(this._url + '/' + id)
+        return this.http.delete(this._url + '/' + id, {responseType: 'text'})
+    }
+
+    putAhorro(ahorro: any): Observable<any>{
+      return this.http.put(this._url + '/' + ahorro.id, ahorro)
     }
 
     handleError(error: Response): any{

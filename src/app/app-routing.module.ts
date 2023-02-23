@@ -4,12 +4,12 @@ import { CalculadoraDeAhorroComponent } from './calculadora-de-ahorro/calculador
 import { MillonarioComponent } from './millonario/millonario.component';
 import { GestorDeGastosComponent } from './gestor-de-gastos/gestor-de-gastos.component';
 import { ContactoComponent } from './contacto/contacto.component';
+import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'calculadora-de-ahorro',
-    pathMatch: 'full'
+    component: HomeComponent
   },
   {
     path: 'calculadoraDeAhorro',
@@ -22,11 +22,15 @@ const routes: Routes = [
   {
     	path: 'GestorDeGastos',
     component: GestorDeGastosComponent
-},
-{
-  path: 'Contacto',
-  component: ContactoComponent
-}
+  },
+  {
+    path: 'Contacto',
+    component: ContactoComponent
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  }
 ];
 
 @NgModule({

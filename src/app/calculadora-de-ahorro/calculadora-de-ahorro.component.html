@@ -18,7 +18,7 @@
         <button *ngIf="!modoEdicion" type="submit" class="btn btn-primary mt-3" (click)="agregarAhorro()">Calcular</button>
       </div>
     </div>
-    
+
     <div class="card col-10 col-md-4 m-3">
       <div class="card-body">
         <h3 class="card-title">Referencias:</h3>
@@ -30,7 +30,7 @@
         <p>Emergencias: 20% de los 90% restantes</p>
       </div>
       </div>
-   
+
       <div class="card-body">
         <h3 class="card-title">Balance:</h3>
         <p>Para toda la vida: ${{paraTodaLaVidaBalance}}</p>
@@ -44,7 +44,7 @@
   </div>
 </div>
 
-<div *ngIf="mostrarTabla" class="container overflow-auto mt-5 mb-5">
+<div *ngIf="this.ahorros.length > 0" class="container overflow-auto mt-5 mb-5">
   <table class="table table-striped table-bordered table-hover">
     <thead>
       <tr>

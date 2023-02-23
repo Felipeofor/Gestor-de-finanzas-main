@@ -14,14 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
-const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'CalculadoraDeAhorro', component: CalculadoraDeAhorroComponent },
-  { path: 'GestorDeGastos', component: GestorDeGastosComponent },
-  { path: 'Contacto', component: ContactoComponent },
-  { path: 'Millonario', component: MillonarioComponent }
-]
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,9 +29,8 @@ const appRoutes: Routes = [
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    RouterModule.forRoot(appRoutes),
     NoopAnimationsModule,
-    
+
   ],
   providers: [],
   bootstrap: [AppComponent]

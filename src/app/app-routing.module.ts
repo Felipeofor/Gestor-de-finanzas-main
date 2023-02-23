@@ -12,7 +12,7 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'calculadoraDeAhorro',
+    path: 'CalculadoraDeAhorro',
     component: CalculadoraDeAhorroComponent
   },
   {

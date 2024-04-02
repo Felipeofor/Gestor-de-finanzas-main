@@ -26,3 +26,8 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 # Gestor-de-finanzas
+
+## Despliegue en netlifly
+1_ npm i -g netlify-cli   Para instalar el cli de netflify.
+2_ ng build --prod        Para hacer el build de nuestra aplicacion.
+3_ netlify deploy --prod  Para desplegar la aplicacion en netlify

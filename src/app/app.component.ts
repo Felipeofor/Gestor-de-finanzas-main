@@ -6,10 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ahorroAngular13Crud';
-
-  constructor(){
-  }
-
+  title = 'Finanzas 2.0';
 }
 

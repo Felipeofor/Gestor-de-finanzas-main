@@ -1,4 +1,37 @@
-.referencias{
-    border: 1px solid #ccc;
-    padding: 1rem;
+.balance-grid,
+.reference-grid {
+  display: grid;
+  gap: 0.6rem 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.balance-grid span,
+.reference-grid span {
+  color: #667085;
+}
+
+.balance-grid strong,
+.reference-grid strong {
+  color: #1f2937;
+  text-align: right;
+}
+
+.table-actions {
+  min-width: 150px;
+}
+
+.table-actions .btn {
+  margin-right: 0.4rem;
+}
+
+@media (max-width: 576px) {
+  .balance-grid,
+  .reference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-grid strong,
+  .reference-grid strong {
+    text-align: left;
+  }
 }

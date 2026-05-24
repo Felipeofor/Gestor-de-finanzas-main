@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 
 import { CalculadoraDeAhorroComponent } from './calculadora-de-ahorro.component';
 
@@ -8,6 +9,7 @@ describe('CalculadoraDeAhorroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FormsModule],
       declarations: [ CalculadoraDeAhorroComponent ]
     })
     .compileComponents();

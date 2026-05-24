@@ -1,0 +1,27 @@
+.summary-row {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.summary-row strong {
+  color: #0d6efd;
+  font-size: 1.1rem;
+}
+
+.table-actions {
+  min-width: 150px;
+}
+
+.table-actions .btn {
+  margin-right: 0.4rem;
+}
+
+@media (max-width: 576px) {
+  .summary-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 
 import { MillonarioComponent } from './millonario.component';
 
@@ -8,6 +9,7 @@ describe('MillonarioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FormsModule],
       declarations: [ MillonarioComponent ]
     })
     .compileComponents();

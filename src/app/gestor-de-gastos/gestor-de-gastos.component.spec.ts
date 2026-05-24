@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 
 import { GestorDeGastosComponent } from './gestor-de-gastos.component';
 
@@ -8,6 +9,7 @@ describe('GestorDeGastosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FormsModule],
       declarations: [ GestorDeGastosComponent ]
     })
     .compileComponents();

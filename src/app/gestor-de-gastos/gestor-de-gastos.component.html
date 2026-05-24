@@ -1,53 +1,68 @@
-<app-navbar></app-navbar>
-<section class="container mt-5 p-5">
-  <h2 class="mb-3 d-flex justify-content-center ">Gestor de gastos</h2>
-  <div>
-    <div class="mb-3">
-      <label for="nombre" name="nombre" class="form-label">Nombre del gasto</label>
-      <input type="text" [(ngModel)]="inputNombre" class="form-control" id="nombre">
-    </div>
-    <div class="mb-3">
-      <label for="detalle" name="detalle" class="form-label">Detalle</label>
-      <input type="text" [(ngModel)]="inputDetalle" class="form-control" id="detalle">
-    </div>
-    <div class="mb-3">
-      <label for="tipo" class="form-label">Tipo de gasto</label>
-      <input type="text" [(ngModel)]="inputTipo" class="form-control" id="precio">
-    </div>
-    <div class="mb-3">
-      <label for="precio" class="form-label">Precio</label>
-      <input type="number" [(ngModel)]="inputPrecio" class="form-control" id="precio">
-    </div>
-    <button *ngIf="!modoEdicion" type="submit" (click)="agregarGasto()" class="btn btn-primary mt-3">Guardar
-      gasto</button>
-    <button *ngIf="modoEdicion" type="submit" (click)="agregarGasto()" class="btn btn-primary mt-3">Guardar
-      edición</button>
-  </div>
+<main class="container page-shell">
+  <h1>Gestor de gastos</h1>
 
-  <div *ngIf="this.gastos.length > 0" class="mt-5 mb-5 overflow-auto">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Fecha y hora</th>
-          <th scope="col">Nombre</th>
-          <th scope="col">Detalle</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Monto</th>
-          <th scope="col">Editar/Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of gastos;let i = index">
-          <td>{{item.fechaYHora}}</td>
-          <td>{{item.nombre}}</td>
-          <td>{{item.detalle}}</td>
-          <td>{{item.tipo}}</td>
-          <td>{{item.precio}}</td>
-          <td>
-            <button class="btn btn-danger m-1" (click)="eliminarGasto(i)">Eliminar</button>
-            <button *ngIf="!item.editar" class="btn btn-warning m-1" (click)="editarGasto(i)">Editar</button>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+  <section class="panel">
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <label for="nombre" class="form-label">Nombre del gasto</label>
+        <input type="text" [(ngModel)]="inputNombre" class="form-control" id="nombre" placeholder="Supermercado">
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="tipo" class="form-label">Tipo de gasto</label>
+        <input type="text" [(ngModel)]="inputTipo" class="form-control" id="tipo" placeholder="Comida, transporte, servicios">
+      </div>
+      <div class="col-12 col-md-8">
+        <label for="detalle" class="form-label">Detalle</label>
+        <input type="text" [(ngModel)]="inputDetalle" class="form-control" id="detalle" placeholder="Compra semanal">
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="precio" class="form-label">Precio</label>
+        <input type="number" min="1" [(ngModel)]="inputPrecio" class="form-control" id="precio">
+      </div>
+    </div>
+
+    <p *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{ errorMessage }}</p>
+
+    <div class="d-flex gap-2 mt-3">
+      <button type="button" (click)="agregarGasto()" class="btn btn-primary">
+        {{ modoEdicion ? 'Guardar edición' : 'Guardar gasto' }}
+      </button>
+      <button *ngIf="modoEdicion" type="button" (click)="cancelarEdicion()" class="btn btn-outline-secondary">Cancelar</button>
+    </div>
+  </section>
+
+  <section *ngIf="gastos.length > 0" class="panel mt-4">
+    <div class="summary-row">
+      <h2>Gastos registrados</h2>
+      <strong>Total: ${{ currency(totalGastos) }}</strong>
+    </div>
+
+    <div class="overflow-auto">
+      <table class="table table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Fecha y hora</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Detalle</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Monto</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of gastos; let i = index">
+            <td>{{ item.fechaYHora }}</td>
+            <td>{{ item.nombre || '-' }}</td>
+            <td>{{ item.detalle }}</td>
+            <td>{{ item.tipo || '-' }}</td>
+            <td>${{ currency(item.precio) }}</td>
+            <td class="table-actions">
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="editarGasto(i)">Editar</button>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarGasto(i)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

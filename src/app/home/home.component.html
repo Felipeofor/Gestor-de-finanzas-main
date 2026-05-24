@@ -1,37 +1,41 @@
-<app-navbar></app-navbar>
-<div class="card-group container mt-5">
+<main class="container page-shell">
+  <section class="home-hero">
+    <div>
+      <p class="eyebrow">Finanzas personales</p>
+      <h1>Herramientas simples para ordenar tu dinero</h1>
+      <p class="lead">Calculá cómo distribuir tus ingresos, registrá gastos y estimá objetivos de ahorro desde un solo lugar.</p>
+    </div>
+  </section>
 
-  <div class="card">
-    <a href="CalculadoraDeAhorro">
-      <img src="../../assets/img/ahorro1.jpg" class="card-img-top" style="height:280px" alt="...">
-      <div class="card-body">
-        <h3 class="card-title">Calculadora de Ahorro</h3>
-        <p class="card-text pt-3">Podrás saber cuando tienes que separar para cada tipo de gasto. Esto te llevará a una
-          vida con unas finanzas organizadas y sin deudas</p>
-      </div>
-    </a>
-  </div>
+  <section class="tool-grid">
+    <article class="tool-card">
+      <a routerLink="/calculadora-de-ahorro">
+        <img src="assets/img/ahorro1.jpg" class="card-img-top" alt="Persona organizando ahorros">
+        <div class="card-body">
+          <h2>Calculadora de ahorro</h2>
+          <p>Distribuí tus ingresos entre ahorro, gastos básicos, gustos y emergencias.</p>
+        </div>
+      </a>
+    </article>
 
-  <div class="card">
-    <a href="GestorDeGastos">
-      <img src="../../assets/img/ahorro2.jpg" class="card-img-top" style="height:280px" alt="...">
-      <div class="card-body">
-        <h3 class="card-title">Gestor de gastos</h3>
-        <p class="card-text pt-3">¿Querés saber en qué se te va el dinero? ¡Si llevas el apunte de tus gastos vas a
-          poder conocer donde se va el mismo! Esta es una herramienta fundamenta para cualquier tipo de objetivo
-          financiero.</p>
-      </div>
-    </a>
-  </div>
+    <article class="tool-card">
+      <a routerLink="/gestor-de-gastos">
+        <img src="assets/img/ahorro2.jpg" class="card-img-top" alt="Registro de gastos personales">
+        <div class="card-body">
+          <h2>Gestor de gastos</h2>
+          <p>Registrá gastos cotidianos y mirá el total acumulado para tomar mejores decisiones.</p>
+        </div>
+      </a>
+    </article>
 
-  <div class="card">
-    <a href="Millonario">
-      <img src="../../assets/img/ahorro.jpg" class="card-img-top" style="height:280px" alt="...">
-      <div class="card-body">
-        <h3 class="card-title">Quiero ser millonario</h3>
-        <p class="card-text pt-3">Podrás saber cuanto dinero tendrías que ganar para llegar a ser millonario y cuanto
-          tiempo te demoraras</p>
-      </div>
-    </a>
-  </div>
-</div>
+    <article class="tool-card">
+      <a routerLink="/millonario">
+        <img src="assets/img/ahorro.jpg" class="card-img-top" alt="Objetivo financiero de largo plazo">
+        <div class="card-body">
+          <h2>Quiero ser millonario</h2>
+          <p>Estimá cuánto deberías generar por día para alcanzar un objetivo financiero.</p>
+        </div>
+      </a>
+    </article>
+  </section>
+</main>

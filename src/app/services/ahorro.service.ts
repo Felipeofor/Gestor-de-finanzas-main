@@ -1,37 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http'
-import { catchError, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { Ahorro } from 'src/calculadoraDeAhorro.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AhorroService {
+  private readonly storageKey = 'ahorros';
 
-  _url = 'http://localhost:9000/api'
+  getAhorros(): Observable<Ahorro[]> {
+    return of(this.read());
+  }
 
-  constructor(private http: HttpClient) {
-    console.log("servicio ahorro activo")
-   }
+  saveAhorros(ahorros: Ahorro[]): void {
+    localStorage.setItem(this.storageKey, JSON.stringify(ahorros));
+  }
 
-   getAhorro(): Observable<any>{
-        return this.http.get(this._url).pipe(
-          catchError(this.handleError)
-        )
+  private read(): Ahorro[] {
+    let rawAhorros: Partial<Ahorro>[] = [];
+
+    try {
+      rawAhorros = JSON.parse(localStorage.getItem(this.storageKey) || '[]') as Partial<Ahorro>[];
+    } catch {
+      this.saveAhorros([]);
     }
 
-    postAhorro(ahorro: any): Observable<any>{
-      return this.http.post(this._url, ahorro, {responseType: 'text'})
-    }
-    
-    deleteAhorro(id: number): Observable<any>{
-        return this.http.delete(this._url + '/' + id, {responseType: 'text'})
-    }
-
-    putAhorro(ahorro: any): Observable<any>{
-      return this.http.put(this._url + '/' + ahorro.id, ahorro)
-    }
-
-    handleError(error: Response): any{
-          console.log(error);
-    }
+    return rawAhorros
+      .filter((item) => Number(item.ingreso) > 0 && !!item.mes && !!item.referencia)
+      .map((item, index) => new Ahorro(
+        Number(item.ingreso),
+        String(item.mes),
+        String(item.referencia),
+        Number(item.id) || Date.now() + index
+      ));
+  }
 }

@@ -1,80 +1,96 @@
-<app-navbar></app-navbar>
-<div class="container mt-5 justify-content-center">
-  <h2 class="mb-3 d-flex justify-content-center ">Calculadora de ahorro</h2>
-  <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
-    <div class="col-8 d-flex justify-content-start col-md-justify-content-center">
-      <div class="d-flex flex-column col-12 col-md-6 justify-content-center p-3">
+<main class="container page-shell">
+  <h1>Calculadora de ahorro</h1>
+
+  <div class="row g-4 align-items-start">
+    <section class="col-12 col-lg-7">
+      <div class="panel">
         <div class="form-group">
           <label for="monto">Monto</label>
-          <input type="number" class="form-control" id="monto" name="monto" placeholder="Ingrese un monto" [(ngModel)]="inputMonto" >
+          <input type="number" class="form-control" id="monto" name="monto" min="1" placeholder="Ingrese un monto" [(ngModel)]="inputMonto">
         </div>
         <div class="form-group">
           <label for="mes">Mes</label>
-          <input type="text" name="mes" class="form-control" id="mes" placeholder="Enero" [(ngModel)]="inputMes" >
+          <input type="text" name="mes" class="form-control" id="mes" placeholder="Enero" [(ngModel)]="inputMes">
         </div>
         <div class="form-group">
           <label for="referencia">Referencia</label>
-          <input type="text" name="referencia" class="form-control" id="referencia" placeholder="Sueldo" [(ngModel)]="inputReferencia" >
+          <input type="text" name="referencia" class="form-control" id="referencia" placeholder="Sueldo" [(ngModel)]="inputReferencia">
         </div>
-        <button *ngIf="!modoEdicion" type="submit" class="btn btn-primary mt-3" (click)="agregarAhorro()">Calcular</button>
-      </div>
-    </div>
 
-    <div class="card col-10 col-md-4 m-3">
-      <div class="card-body">
-        <h3 class="card-title">Referencias:</h3>
-        <p>Para toda la vida: 10% del monto</p>
-        <div class="referencias">
-        <p>Gastos basicos: 60% de los 90% restantes</p>
-        <p>Gustos de corto plazo: 10% de los 90% restantes </p>
-        <p>Gastos de largo plazo: 10% de los 90% restantes</p>
-        <p>Emergencias: 20% de los 90% restantes</p>
-      </div>
-      </div>
+        <p *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{ errorMessage }}</p>
 
-      <div class="card-body">
-        <h3 class="card-title">Balance:</h3>
-        <p>Para toda la vida: ${{paraTodaLaVidaBalance}}</p>
-        <p>Gastos basicos: ${{gastosBasicosBalance}}</p>
-        <p>Gustos de corto plazo: ${{gustosCortoPlazoBalance}} </p>
-        <p>Gastos de largo plazo: ${{gustosLargoPlazoBalance}}</p>
-        <p>Emergencias: ${{emergenciasBalance}}</p>
-        <p>Total: ${{totalBalance}}</p>
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-primary" (click)="agregarAhorro()">
+            {{ editingIndex === null ? 'Calcular' : 'Guardar edición' }}
+          </button>
+          <button *ngIf="editingIndex !== null" type="button" class="btn btn-outline-secondary" (click)="cancelarEdicion()">Cancelar</button>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <aside class="col-12 col-lg-5">
+      <div class="panel">
+        <h2>Balance</h2>
+        <div class="balance-grid">
+          <span>Para toda la vida</span>
+          <strong>${{ currency(paraTodaLaVidaBalance) }}</strong>
+          <span>Gastos básicos</span>
+          <strong>${{ currency(gastosBasicosBalance) }}</strong>
+          <span>Gustos de corto plazo</span>
+          <strong>${{ currency(gustosCortoPlazoBalance) }}</strong>
+          <span>Gustos de largo plazo</span>
+          <strong>${{ currency(gustosLargoPlazoBalance) }}</strong>
+          <span>Emergencias</span>
+          <strong>${{ currency(emergenciasBalance) }}</strong>
+          <span>Total</span>
+          <strong>${{ currency(totalBalance) }}</strong>
+        </div>
+      </div>
+    </aside>
   </div>
-</div>
 
-<div *ngIf="this.ahorros.length > 0" class="container overflow-auto mt-5 mb-5">
-  <table class="table table-striped table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>Mes</th>
-        <th>Monto</th>
-        <th>Para toda la vida</th>
-        <th>Gastos basicos</th>
-        <th>Gustos de corto plazo</th>
-        <th>Gustos de largo plazo</th>
-        <th>Emergencias</th>
-        <th>Referencia</th>
-        <th>Editar/Eliminar</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="gastos" *ngFor="let item of ahorros; let i= index" >
-        <td class="text-capitalize">{{item.mes.toUpperCase()}}</td>
-        <td>${{currency(item.ingreso)}}</td>
-        <td>${{currency(item.paraTodaLaVida)}}</td>
-        <td>${{currency(item.gastosBasicos)}}</td>
-        <td>${{currency(item.gustosCortoPlazo)}}</td>
-        <td>${{currency(item.gustosLargoPlazo)}}</td>
-        <td>${{currency(item.emergencias)}}</td>
-        <td class="text-capitalize">{{item.referencia.toUpperCase()}}</td>
-        <td class="justify-content-center">
-          <button *ngIf="item.editar" class="btn btn-primary m-1"(click)="editarAhorro(i)">Guardar edición</button>
-          <button *ngIf="!item.editar" class="btn btn-primary m-1" (click)="editarAhorro(i)">Editar</button>
-          <button class="btn btn-danger m-1" (click)="eliminarAhorro(item.id)">Eliminar</button>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <section class="panel mt-4">
+    <h2>Distribución sugerida</h2>
+    <div class="reference-grid">
+      <span>Para toda la vida</span><strong>10% del monto</strong>
+      <span>Gastos básicos</span><strong>60% del 90% restante</strong>
+      <span>Gustos de corto plazo</span><strong>10% del 90% restante</strong>
+      <span>Gustos de largo plazo</span><strong>10% del 90% restante</strong>
+      <span>Emergencias</span><strong>20% del 90% restante</strong>
+    </div>
+  </section>
+
+  <section *ngIf="ahorros.length > 0" class="panel mt-4 overflow-auto">
+    <table class="table table-striped table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Monto</th>
+          <th>Para toda la vida</th>
+          <th>Gastos básicos</th>
+          <th>Gustos corto plazo</th>
+          <th>Gustos largo plazo</th>
+          <th>Emergencias</th>
+          <th>Referencia</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of ahorros; let i = index">
+          <td class="text-capitalize">{{ item.mes }}</td>
+          <td>${{ currency(item.ingreso) }}</td>
+          <td>${{ currency(item.paraTodaLaVida) }}</td>
+          <td>${{ currency(item.gastosBasicos) }}</td>
+          <td>${{ currency(item.gustosCortoPlazo) }}</td>
+          <td>${{ currency(item.gustosLargoPlazo) }}</td>
+          <td>${{ currency(item.emergencias) }}</td>
+          <td class="text-capitalize">{{ item.referencia }}</td>
+          <td class="table-actions">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="editarAhorro(i)">Editar</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarAhorro(i)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

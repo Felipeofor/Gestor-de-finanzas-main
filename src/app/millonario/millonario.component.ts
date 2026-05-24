@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./millonario.component.css']
 })
 export class MillonarioComponent implements OnInit {
-
   constructor() { }
 
   ngOnInit(): void {
@@ -19,21 +18,26 @@ export class MillonarioComponent implements OnInit {
   alertaMillones: boolean = false;
   alerta: boolean = false;
 
+  currency(value: number | bigint): string {
+    return new Intl.NumberFormat('es-AR').format(value);
+  }
+
   calcularMillonario(): void {
     if (this.inputTiempo > 0 && this.inputMillones >= 1000000) {
-      let dias = this.inputTiempo * 365;
+      const dias = this.inputTiempo * 365;
       this.resultado = Math.round(this.inputMillones / dias);
       this.mostrarResultado = true;
       this.alertaMillones = false;
       this.alerta = false;
     }
-    if(this.inputMillones < 1000000){
+    if (this.inputMillones < 1000000) {
       this.alertaMillones = true;
+      this.mostrarResultado = false;
     }
-    if(this.inputTiempo <= 0){
+
+    if (this.inputTiempo <= 0) {
       this.alerta = true;
+      this.mostrarResultado = false;
     }
-
   }
-
 }

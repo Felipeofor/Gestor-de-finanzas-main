@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Ahorro } from 'src/calculadoraDeAhorro.model';
+import { Ahorro, AhorroDistribution, DEFAULT_AHORRO_DISTRIBUTION } from 'src/calculadoraDeAhorro.model';
 import { AhorroService } from '../services/ahorro.service';
 
 @Component({
@@ -8,6 +8,8 @@ import { AhorroService } from '../services/ahorro.service';
   styleUrls: ['./calculadora-de-ahorro.component.css']
 })
 export class CalculadoraDeAhorroComponent implements OnInit {
+  private readonly distributionStorageKey = 'ahorroDistribution';
+
   ahorros: Ahorro[] = [];
   inputMonto: number = 0;
   inputMes: string = '';
@@ -20,14 +22,28 @@ export class CalculadoraDeAhorroComponent implements OnInit {
   emergenciasBalance: number = 0;
   editingIndex: number | null = null;
   errorMessage: string = '';
+  distributionErrorMessage: string = '';
+  distribution: AhorroDistribution = { ...DEFAULT_AHORRO_DISTRIBUTION };
+  distributionDraft: AhorroDistribution = { ...DEFAULT_AHORRO_DISTRIBUTION };
 
   constructor(private ahorroService: AhorroService) {}
 
   ngOnInit(): void {
-    this.ahorroService.getAhorros().subscribe((ahorros) => {
+    this.distribution = this.readDistribution();
+    this.distributionDraft = { ...this.distribution };
+
+    this.ahorroService.getAhorros(this.distribution).subscribe((ahorros) => {
       this.ahorros = ahorros;
       this.balance();
     });
+  }
+
+  get restantePercent(): number {
+    return 100 - this.distribution.paraTodaLaVida;
+  }
+
+  get draftRestantePercent(): number {
+    return 100 - this.distributionDraft.paraTodaLaVida;
   }
 
   currency(value: number | bigint): string {
@@ -40,13 +56,14 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     }
 
     if (this.editingIndex === null) {
-      this.ahorros.push(new Ahorro(this.inputMonto, this.inputMes, this.inputReferencia));
+      this.ahorros.push(new Ahorro(this.inputMonto, this.inputMes, this.inputReferencia, Date.now(), this.distribution));
     } else {
       this.ahorros[this.editingIndex] = new Ahorro(
         this.inputMonto,
         this.inputMes,
         this.inputReferencia,
-        this.ahorros[this.editingIndex].id
+        this.ahorros[this.editingIndex].id,
+        this.distribution
       );
     }
 
@@ -72,6 +89,26 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     this.resetForm();
   }
 
+  guardarDistribucion(): void {
+    this.normalizeDistributionDraft();
+
+    if (!this.isValidDistribution(this.distributionDraft)) {
+      return;
+    }
+
+    this.distribution = { ...this.distributionDraft };
+    localStorage.setItem(this.distributionStorageKey, JSON.stringify(this.distribution));
+    this.recalculateAhorros();
+    this.persist();
+    this.distributionErrorMessage = '';
+  }
+
+  restaurarDistribucion(): void {
+    this.distributionDraft = { ...DEFAULT_AHORRO_DISTRIBUTION };
+    this.distributionErrorMessage = '';
+    this.guardarDistribucion();
+  }
+
   private balance(): void {
     this.totalBalance = this.ahorros.reduce((total, ahorro) => total + ahorro.ingreso, 0);
     this.paraTodaLaVidaBalance = this.ahorros.reduce((total, ahorro) => total + ahorro.paraTodaLaVida, 0);
@@ -94,6 +131,63 @@ export class CalculadoraDeAhorroComponent implements OnInit {
 
     this.errorMessage = '';
     return true;
+  }
+
+  private isValidDistribution(distribution: AhorroDistribution): boolean {
+    const values = Object.values(distribution);
+
+    if (values.some((value) => value < 0 || value > 100 || Number.isNaN(value))) {
+      this.distributionErrorMessage = 'Todos los porcentajes tienen que estar entre 0 y 100.';
+      return false;
+    }
+
+    const restanteTotal = distribution.gastosBasicos
+      + distribution.gustosCortoPlazo
+      + distribution.gustosLargoPlazo
+      + distribution.emergencias;
+
+    if (restanteTotal !== 100) {
+      this.distributionErrorMessage = 'Los porcentajes del monto restante tienen que sumar 100%.';
+      return false;
+    }
+
+    this.distributionErrorMessage = '';
+    return true;
+  }
+
+  private normalizeDistributionDraft(): void {
+    this.distributionDraft = {
+      paraTodaLaVida: Number(this.distributionDraft.paraTodaLaVida) || 0,
+      gastosBasicos: Number(this.distributionDraft.gastosBasicos) || 0,
+      gustosCortoPlazo: Number(this.distributionDraft.gustosCortoPlazo) || 0,
+      gustosLargoPlazo: Number(this.distributionDraft.gustosLargoPlazo) || 0,
+      emergencias: Number(this.distributionDraft.emergencias) || 0
+    };
+  }
+
+  private recalculateAhorros(): void {
+    this.ahorros = this.ahorros.map((ahorro) => new Ahorro(
+      ahorro.ingreso,
+      ahorro.mes,
+      ahorro.referencia,
+      ahorro.id,
+      this.distribution
+    ));
+  }
+
+  private readDistribution(): AhorroDistribution {
+    try {
+      const storedDistribution = JSON.parse(localStorage.getItem(this.distributionStorageKey) || 'null') as AhorroDistribution | null;
+
+      if (storedDistribution && this.isValidDistribution(storedDistribution)) {
+        return storedDistribution;
+      }
+    } catch {
+      localStorage.removeItem(this.distributionStorageKey);
+    }
+
+    this.distributionErrorMessage = '';
+    return { ...DEFAULT_AHORRO_DISTRIBUTION };
   }
 
   private resetForm(): void {

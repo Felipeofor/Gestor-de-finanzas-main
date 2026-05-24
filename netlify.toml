@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = "dist/ahorro-angular13-crud"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

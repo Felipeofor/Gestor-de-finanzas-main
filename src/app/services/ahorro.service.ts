@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Ahorro } from 'src/calculadoraDeAhorro.model';
+import { Ahorro, AhorroDistribution, DEFAULT_AHORRO_DISTRIBUTION } from 'src/calculadoraDeAhorro.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,15 +8,15 @@ import { Ahorro } from 'src/calculadoraDeAhorro.model';
 export class AhorroService {
   private readonly storageKey = 'ahorros';
 
-  getAhorros(): Observable<Ahorro[]> {
-    return of(this.read());
+  getAhorros(distribution: AhorroDistribution = DEFAULT_AHORRO_DISTRIBUTION): Observable<Ahorro[]> {
+    return of(this.read(distribution));
   }
 
   saveAhorros(ahorros: Ahorro[]): void {
     localStorage.setItem(this.storageKey, JSON.stringify(ahorros));
   }
 
-  private read(): Ahorro[] {
+  private read(distribution: AhorroDistribution): Ahorro[] {
     let rawAhorros: Partial<Ahorro>[] = [];
 
     try {
@@ -31,7 +31,8 @@ export class AhorroService {
         Number(item.ingreso),
         String(item.mes),
         String(item.referencia),
-        Number(item.id) || Date.now() + index
+        Number(item.id) || Date.now() + index,
+        distribution
       ));
   }
 }

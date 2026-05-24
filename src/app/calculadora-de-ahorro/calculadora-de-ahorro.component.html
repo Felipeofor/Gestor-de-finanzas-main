@@ -50,13 +50,65 @@
   </div>
 
   <section class="panel mt-4">
-    <h2>Distribución sugerida</h2>
+    <div class="distribution-header">
+      <h2>Distribución sugerida</h2>
+      <span>Personalizable</span>
+    </div>
+
     <div class="reference-grid">
-      <span>Para toda la vida</span><strong>10% del monto</strong>
-      <span>Gastos básicos</span><strong>60% del 90% restante</strong>
-      <span>Gustos de corto plazo</span><strong>10% del 90% restante</strong>
-      <span>Gustos de largo plazo</span><strong>10% del 90% restante</strong>
-      <span>Emergencias</span><strong>20% del 90% restante</strong>
+      <span>Para toda la vida</span><strong>{{ distribution.paraTodaLaVida }}% del monto</strong>
+      <span>Gastos básicos</span><strong>{{ distribution.gastosBasicos }}% del {{ restantePercent }}% restante</strong>
+      <span>Gustos de corto plazo</span><strong>{{ distribution.gustosCortoPlazo }}% del {{ restantePercent }}% restante</strong>
+      <span>Gustos de largo plazo</span><strong>{{ distribution.gustosLargoPlazo }}% del {{ restantePercent }}% restante</strong>
+      <span>Emergencias</span><strong>{{ distribution.emergencias }}% del {{ restantePercent }}% restante</strong>
+    </div>
+
+    <div class="distribution-editor">
+      <div class="row g-3">
+        <div class="col-12 col-md">
+          <label for="paraTodaLaVidaPercent">Para toda la vida</label>
+          <div class="input-group">
+            <input id="paraTodaLaVidaPercent" type="number" min="0" max="100" class="form-control" [(ngModel)]="distributionDraft.paraTodaLaVida">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+        <div class="col-12 col-md">
+          <label for="gastosBasicosPercent">Gastos básicos</label>
+          <div class="input-group">
+            <input id="gastosBasicosPercent" type="number" min="0" max="100" class="form-control" [(ngModel)]="distributionDraft.gastosBasicos">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+        <div class="col-12 col-md">
+          <label for="gustosCortoPercent">Gustos corto plazo</label>
+          <div class="input-group">
+            <input id="gustosCortoPercent" type="number" min="0" max="100" class="form-control" [(ngModel)]="distributionDraft.gustosCortoPlazo">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+        <div class="col-12 col-md">
+          <label for="gustosLargoPercent">Gustos largo plazo</label>
+          <div class="input-group">
+            <input id="gustosLargoPercent" type="number" min="0" max="100" class="form-control" [(ngModel)]="distributionDraft.gustosLargoPlazo">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+        <div class="col-12 col-md">
+          <label for="emergenciasPercent">Emergencias</label>
+          <div class="input-group">
+            <input id="emergenciasPercent" type="number" min="0" max="100" class="form-control" [(ngModel)]="distributionDraft.emergencias">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="distribution-hint">Los últimos cuatro valores se calculan sobre el {{ draftRestantePercent }}% restante y deben sumar 100%.</p>
+      <p *ngIf="distributionErrorMessage" class="alert alert-danger mt-3 mb-0">{{ distributionErrorMessage }}</p>
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="button" class="btn btn-primary" (click)="guardarDistribucion()">Guardar configuración</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="restaurarDistribucion()">Restaurar default</button>
+      </div>
     </div>
   </section>
 

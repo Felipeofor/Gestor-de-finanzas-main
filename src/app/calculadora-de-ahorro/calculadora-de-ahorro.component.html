@@ -52,7 +52,7 @@
   <section class="panel mt-4">
     <div class="distribution-header">
       <h2>Distribución sugerida</h2>
-      <span>Personalizable</span>
+      <button *ngIf="!isEditingDistribution" type="button" class="btn btn-sm btn-outline-primary" (click)="editarDistribucion()">Personalizar</button>
     </div>
 
     <div class="reference-grid">
@@ -63,7 +63,7 @@
       <span>Emergencias</span><strong>{{ distribution.emergencias }}% del {{ restantePercent }}% restante</strong>
     </div>
 
-    <div class="distribution-editor">
+    <div *ngIf="isEditingDistribution" class="distribution-editor">
       <div class="row g-3">
         <div class="col-12 col-md">
           <label for="paraTodaLaVidaPercent">Para toda la vida</label>
@@ -107,6 +107,7 @@
 
       <div class="d-flex gap-2 mt-3">
         <button type="button" class="btn btn-primary" (click)="guardarDistribucion()">Guardar configuración</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="cancelarDistribucion()">Cancelar</button>
         <button type="button" class="btn btn-outline-secondary" (click)="restaurarDistribucion()">Restaurar default</button>
       </div>
     </div>

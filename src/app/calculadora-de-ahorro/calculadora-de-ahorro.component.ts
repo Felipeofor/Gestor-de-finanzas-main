@@ -23,6 +23,7 @@ export class CalculadoraDeAhorroComponent implements OnInit {
   editingIndex: number | null = null;
   errorMessage: string = '';
   distributionErrorMessage: string = '';
+  isEditingDistribution: boolean = false;
   distribution: AhorroDistribution = { ...DEFAULT_AHORRO_DISTRIBUTION };
   distributionDraft: AhorroDistribution = { ...DEFAULT_AHORRO_DISTRIBUTION };
 
@@ -89,6 +90,18 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     this.resetForm();
   }
 
+  editarDistribucion(): void {
+    this.distributionDraft = { ...this.distribution };
+    this.distributionErrorMessage = '';
+    this.isEditingDistribution = true;
+  }
+
+  cancelarDistribucion(): void {
+    this.distributionDraft = { ...this.distribution };
+    this.distributionErrorMessage = '';
+    this.isEditingDistribution = false;
+  }
+
   guardarDistribucion(): void {
     this.normalizeDistributionDraft();
 
@@ -101,6 +114,7 @@ export class CalculadoraDeAhorroComponent implements OnInit {
     this.recalculateAhorros();
     this.persist();
     this.distributionErrorMessage = '';
+    this.isEditingDistribution = false;
   }
 
   restaurarDistribucion(): void {

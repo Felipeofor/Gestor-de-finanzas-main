@@ -32,7 +32,8 @@ export class AhorroService {
         String(item.mes),
         String(item.referencia),
         Number(item.id) || Date.now() + index,
-        distribution
+        distribution,
+        Number(item.compromisos) || 0
       ));
   }
 }

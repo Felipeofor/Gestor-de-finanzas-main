@@ -17,6 +17,13 @@
           <input type="text" name="referencia" class="form-control" id="referencia" placeholder="Sueldo" [(ngModel)]="inputReferencia">
         </div>
 
+        <div class="form-check mt-3" *ngIf="compromisos.length > 0">
+          <input class="form-check-input" type="checkbox" id="descontarCompromisos" name="descontarCompromisos" [(ngModel)]="inputDescontarCompromisos">
+          <label class="form-check-label" for="descontarCompromisos">
+            Descontar compromisos fijos (${{ currency(totalCompromisos) }}) antes de repartir
+          </label>
+        </div>
+
         <p *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{ errorMessage }}</p>
 
         <div class="d-flex gap-2 mt-3">
@@ -32,6 +39,8 @@
       <div class="panel">
         <h2>Balance</h2>
         <div class="balance-grid">
+          <span>Compromisos fijos</span>
+          <strong>${{ currency(compromisosBalance) }}</strong>
           <span>Para toda la vida</span>
           <strong>${{ currency(paraTodaLaVidaBalance) }}</strong>
           <span>Gastos básicos</span>
@@ -45,10 +54,51 @@
           <span>Total</span>
           <strong>${{ currency(totalBalance) }}</strong>
         </div>
+        <p *ngIf="excedenteEmergenciasBalance > 0" class="distribution-hint">
+          ${{ currency(excedenteEmergenciasBalance) }} de emergencias superaron el tope y pasaron a {{ labels[tope.destino] }}.
+        </p>
       </div>
     </aside>
   </div>
 
+  <!-- ------------------------------------------------ compromisos fijos -->
+  <section class="panel mt-4">
+    <h2>Compromisos fijos</h2>
+    <p class="distribution-hint mt-0 mb-3">
+      Se descuentan del monto antes de repartir: cuotas de préstamos, resúmenes de tarjeta, alquiler. El reparto se hace sobre lo que sobra.
+    </p>
+
+    <div *ngIf="compromisos.length > 0" class="compromisos-list mb-3">
+      <div *ngFor="let c of compromisos; let i = index" class="compromiso-row">
+        <span>{{ c.nombre }}</span>
+        <strong>${{ currency(c.monto) }}</strong>
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarCompromiso(i)">Quitar</button>
+      </div>
+      <div class="compromiso-row compromiso-total">
+        <span>Total por mes</span>
+        <strong>${{ currency(totalCompromisos) }}</strong>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-6">
+        <label for="compromisoNombre">Nombre</label>
+        <input id="compromisoNombre" type="text" class="form-control" placeholder="Cuota Banco Provincia" [(ngModel)]="inputCompromisoNombre">
+      </div>
+      <div class="col-8 col-md-4">
+        <label for="compromisoMonto">Monto mensual</label>
+        <input id="compromisoMonto" type="number" min="1" class="form-control" [(ngModel)]="inputCompromisoMonto">
+      </div>
+      <div class="col-4 col-md-2 d-grid">
+        <button type="button" class="btn btn-outline-primary" (click)="agregarCompromiso()">Agregar</button>
+      </div>
+    </div>
+    <p *ngIf="compromisoErrorMessage" class="alert alert-danger mt-3 mb-0">{{ compromisoErrorMessage }}</p>
+    <p class="distribution-hint">Cambiar esta lista no modifica los ingresos ya cargados: cada fila guarda el monto que se descontó en su momento.</p>
+  </section>
+
+  <!-- --------------------------------------------------------- distribución -->
   <section class="panel mt-4">
     <div class="distribution-header">
       <h2>Distribución sugerida</h2>
@@ -56,7 +106,7 @@
     </div>
 
     <div class="reference-grid">
-      <span>Para toda la vida</span><strong>{{ distribution.paraTodaLaVida }}% del monto</strong>
+      <span>Para toda la vida</span><strong>{{ distribution.paraTodaLaVida }}% de lo disponible</strong>
       <span>Gastos básicos</span><strong>{{ distribution.gastosBasicos }}% del {{ restantePercent }}% restante</strong>
       <span>Gustos de corto plazo</span><strong>{{ distribution.gustosCortoPlazo }}% del {{ restantePercent }}% restante</strong>
       <span>Gustos de largo plazo</span><strong>{{ distribution.gustosLargoPlazo }}% del {{ restantePercent }}% restante</strong>
@@ -113,12 +163,132 @@
     </div>
   </section>
 
+  <!-- ------------------------------------------------ tope de emergencias -->
+  <section class="panel mt-4">
+    <div class="distribution-header">
+      <h2>Fondo de emergencias</h2>
+      <button *ngIf="!isEditingTope" type="button" class="btn btn-sm btn-outline-primary" (click)="editarTope()">
+        {{ tope.monto > 0 ? 'Editar tope' : 'Definir tope' }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="tope.monto > 0; else sinTope">
+      <div class="meta-numbers mt-2">
+        <span>${{ currency(emergenciasBalance) }} de ${{ currency(tope.monto) }}</span>
+        <strong>{{ emergenciasPorcentaje }}%</strong>
+      </div>
+      <div class="progress meta-progress">
+        <div class="progress-bar" role="progressbar" [class.bg-success]="emergenciasPorcentaje >= 100"
+             [style.width.%]="emergenciasPorcentaje" [attr.aria-valuenow]="emergenciasPorcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <p class="distribution-hint">
+        {{ emergenciasPorcentaje >= 100
+          ? 'Fondo completo: lo que se asigne a emergencias pasa a ' + labels[tope.destino] + '.'
+          : 'Cuando llegue al tope, el excedente pasa a ' + labels[tope.destino] + '.' }}
+      </p>
+    </ng-container>
+    <ng-template #sinTope>
+      <p class="distribution-hint mt-2">Sin tope: todo lo asignado a emergencias se acumula ahí. Lo habitual es apuntar a 3 a 6 meses de gastos básicos.</p>
+    </ng-template>
+
+    <div *ngIf="isEditingTope" class="distribution-editor">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-5">
+          <label for="topeMonto">Tope del fondo</label>
+          <input id="topeMonto" type="number" min="0" class="form-control" [(ngModel)]="topeDraft.monto">
+          <div class="d-flex gap-2 mt-2" *ngIf="gastosBasicosPromedio > 0">
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="usarMesesDeGastos(3)">3 meses de gastos básicos</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="usarMesesDeGastos(6)">6 meses</button>
+          </div>
+        </div>
+        <div class="col-12 col-md-5">
+          <label for="topeDestino">Excedente va a</label>
+          <select id="topeDestino" class="form-select" [(ngModel)]="topeDraft.destino">
+            <option *ngFor="let key of bolsillosMeta" [ngValue]="key">{{ labels[key] }}</option>
+          </select>
+        </div>
+      </div>
+      <p class="distribution-hint">Promedio de gastos básicos por mes cargado: ${{ currency(gastosBasicosPromedio) }}. Poné 0 para quitar el tope.</p>
+      <div class="d-flex gap-2 mt-3">
+        <button type="button" class="btn btn-primary" (click)="guardarTope()">Guardar tope</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="cancelarTope()">Cancelar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- metas -->
+  <section class="panel mt-4">
+    <h2>Metas por bolsillo</h2>
+
+    <div class="metas-grid">
+      <article *ngFor="let m of metasProgreso" class="meta-card">
+        <div class="distribution-header">
+          <div>
+            <span class="meta-bolsillo">{{ m.label }}</span>
+            <h3 class="meta-nombre">{{ m.meta ? m.meta.nombre : 'Sin meta' }}</h3>
+          </div>
+          <button *ngIf="metaEditando !== m.key" type="button" class="btn btn-sm btn-outline-primary" (click)="editarMeta(m.key)">
+            {{ m.meta ? 'Editar' : 'Definir meta' }}
+          </button>
+        </div>
+
+        <ng-container *ngIf="m.meta && metaEditando !== m.key">
+          <div class="meta-numbers">
+            <span>${{ currency(m.saldo) }} de ${{ currency(m.meta.objetivo) }}</span>
+            <strong>{{ m.porcentaje }}%</strong>
+          </div>
+          <div class="progress meta-progress">
+            <div class="progress-bar" role="progressbar"
+                 [class.bg-success]="m.estado === 'cumplida' || m.estado === 'en-camino'"
+                 [class.bg-warning]="m.estado === 'atrasada'"
+                 [class.bg-danger]="m.estado === 'vencida'"
+                 [style.width.%]="m.porcentaje" [attr.aria-valuenow]="m.porcentaje" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+
+          <div class="reference-grid meta-detalle" *ngIf="m.estado !== 'cumplida'">
+            <span>Falta</span><strong>${{ currency(m.faltante) }}</strong>
+            <span>Meses hasta {{ m.meta.fecha }}</span><strong>{{ m.mesesRestantes }}</strong>
+            <span>Aporte necesario por mes</span><strong>${{ currency(m.aporteNecesario) }}</strong>
+            <span>Tu aporte promedio</span><strong>${{ currency(m.aportePromedio) }}</strong>
+          </div>
+
+          <p class="meta-estado" [ngClass]="'estado-' + m.estado">
+            <ng-container [ngSwitch]="m.estado">
+              <span *ngSwitchCase="'cumplida'">Meta cumplida.</span>
+              <span *ngSwitchCase="'en-camino'">Al ritmo actual llegás a tiempo.</span>
+              <span *ngSwitchCase="'atrasada'">Al ritmo actual no llegás: te faltan ${{ currency(m.aporteNecesario - m.aportePromedio) }} por mes.</span>
+              <span *ngSwitchCase="'vencida'">La fecha ya pasó y la meta no se cumplió.</span>
+            </ng-container>
+          </p>
+        </ng-container>
+
+        <div *ngIf="metaEditando === m.key" class="meta-editor">
+          <label [for]="'metaNombre-' + m.key">Nombre</label>
+          <input [id]="'metaNombre-' + m.key" type="text" class="form-control" placeholder="Auto" [(ngModel)]="metaDraft.nombre">
+          <label class="mt-2" [for]="'metaObjetivo-' + m.key">Monto objetivo</label>
+          <input [id]="'metaObjetivo-' + m.key" type="number" min="1" class="form-control" [(ngModel)]="metaDraft.objetivo">
+          <label class="mt-2" [for]="'metaFecha-' + m.key">Mes objetivo</label>
+          <input [id]="'metaFecha-' + m.key" type="month" class="form-control" [(ngModel)]="metaDraft.fecha">
+          <p *ngIf="metaErrorMessage" class="alert alert-danger mt-3 mb-0">{{ metaErrorMessage }}</p>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button type="button" class="btn btn-sm btn-primary" (click)="guardarMeta()">Guardar</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelarMeta()">Cancelar</button>
+            <button *ngIf="m.meta" type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarMeta(m.key)">Quitar meta</button>
+          </div>
+        </div>
+      </article>
+    </div>
+    <p class="distribution-hint">El aporte promedio se calcula sobre los meses cargados en la tabla.</p>
+  </section>
+
+  <!-- ----------------------------------------------------------- tabla -->
   <section *ngIf="ahorros.length > 0" class="panel mt-4 overflow-auto">
     <table class="table table-striped table-hover align-middle">
       <thead>
         <tr>
           <th>Mes</th>
           <th>Monto</th>
+          <th>Compromisos</th>
           <th>Para toda la vida</th>
           <th>Gastos básicos</th>
           <th>Gustos corto plazo</th>
@@ -132,11 +302,15 @@
         <tr *ngFor="let item of ahorros; let i = index">
           <td class="text-capitalize">{{ item.mes }}</td>
           <td>${{ currency(item.ingreso) }}</td>
+          <td>${{ currency(item.compromisos) }}</td>
           <td>${{ currency(item.paraTodaLaVida) }}</td>
           <td>${{ currency(item.gastosBasicos) }}</td>
           <td>${{ currency(item.gustosCortoPlazo) }}</td>
           <td>${{ currency(item.gustosLargoPlazo) }}</td>
-          <td>${{ currency(item.emergencias) }}</td>
+          <td>
+            ${{ currency(item.emergencias) }}
+            <small *ngIf="item.excedenteEmergencias > 0" class="d-block text-muted">+${{ currency(item.excedenteEmergencias) }} redirigido</small>
+          </td>
           <td class="text-capitalize">{{ item.referencia }}</td>
           <td class="table-actions">
             <button type="button" class="btn btn-sm btn-outline-primary" (click)="editarAhorro(i)">Editar</button>

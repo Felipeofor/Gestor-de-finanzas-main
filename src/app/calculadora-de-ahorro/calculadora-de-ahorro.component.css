@@ -44,6 +44,97 @@
   text-align: right;
 }
 
+.compromisos-list {
+  border: 1px solid rgba(31, 41, 55, 0.1);
+  border-radius: 8px;
+}
+
+.compromiso-row {
+  align-items: center;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.08);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto 70px;
+  padding: 0.55rem 0.9rem;
+}
+
+.compromiso-row:last-child {
+  border-bottom: 0;
+}
+
+.compromiso-row strong {
+  text-align: right;
+}
+
+.compromiso-total span:first-child {
+  color: #667085;
+  font-weight: 600;
+}
+
+.metas-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.meta-card {
+  border: 1px solid rgba(31, 41, 55, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.meta-bolsillo {
+  color: #667085;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.meta-nombre {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.15rem 0 0.75rem;
+}
+
+.meta-numbers {
+  display: flex;
+  font-size: 0.95rem;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.meta-progress {
+  height: 0.6rem;
+}
+
+.meta-detalle {
+  font-size: 0.92rem;
+  margin-top: 0.9rem;
+}
+
+.meta-estado {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 0.8rem 0 0;
+}
+
+.estado-cumplida,
+.estado-en-camino {
+  color: #146c43;
+}
+
+.estado-atrasada {
+  color: #997404;
+}
+
+.estado-vencida {
+  color: #b02a37;
+}
+
+.meta-editor label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
 .table-actions {
   min-width: 150px;
 }
